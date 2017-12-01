@@ -25,7 +25,7 @@ public class EntryParser {
         for(String line : inputBuffer) {
             Matcher m = typeAndIDPattern.matcher(line);
             if(m.find()) {
-                String type = m.group(1);
+                String type = m.group(1).toLowerCase();
                 String ID = m.group(2);
                 System.out.println("type = " + type);
                 System.out.println("ID = " + ID);
@@ -33,7 +33,7 @@ public class EntryParser {
             }
         }
 
-        Pattern assignPattern = Pattern.compile("\\s*(\\S+)\\s*=\\s*([{\"](.*)[}\"]|(.+)),");
+        Pattern assignPattern = Pattern.compile("\\s*(\\S+)\\s*=\\s*([{\"](.*)[}\"]|(\\d+)|(.*)),");
         /* Pattern explanation:
             \s*(\S+)\s*= - match anything except whitespaces till you find '=' sign
             ([{"](.*)[}"]) - match opening [{"], then anything, then closing [}"] (group 3)
@@ -43,10 +43,22 @@ public class EntryParser {
         for(String line : inputBuffer) {
             Matcher m = assignPattern.matcher(line);
             if(m.find()) {
-                String name = m.group(1);
-                String value = m.group(3);
-                if(m.group(3) == null)
+                String name = m.group(1).toLowerCase();
+                String value;
+
+                /* check type of value:
+                    surrounded with braces - normal treatment of string
+                    number - same as above
+                    something different - may contain strings and concatenation '#'
+                 */
+                if(m.group(3) != null) {
+                    value = m.group(3);
+                } else if(m.group(4) != null) {
                     value = m.group(4);
+                } else {
+                    // TODO here we should parse the concatenation
+                    value = m.group(5);
+                }
                 System.out.println("key = " + name + ", value = " + value);
             }
         }
