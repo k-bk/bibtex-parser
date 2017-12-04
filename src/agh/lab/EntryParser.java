@@ -1,8 +1,8 @@
 package agh.lab;
 
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,7 +13,9 @@ public class EntryParser {
         this.inputBuffer = inputBuffer;
     }
 
-    public void parse() {
+    public Map<String, String> parse() {
+
+        Map<String, String> tags = new HashMap<>();
 
         Pattern typeAndIDPattern = Pattern.compile("\\s*@([^{(]+)[{(]\\s*(.+)\\s*,");
         /* Pattern explanation:
@@ -27,8 +29,8 @@ public class EntryParser {
             if(m.find()) {
                 String type = m.group(1).toLowerCase();
                 String ID = m.group(2);
-                System.out.println("type = " + type);
-                System.out.println("ID = " + ID);
+                tags.put("type", type);
+                tags.put("ID", ID);
                 break;
             }
         }
@@ -59,8 +61,10 @@ public class EntryParser {
                     // TODO here we should parse the concatenation
                     value = m.group(5);
                 }
-                System.out.println("key = " + name + ", value = " + value);
+                tags.put(name, value);
             }
         }
+
+        return tags;
     }
 }
