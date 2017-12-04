@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 public class EntryParser {
     private LinkedList<String> inputBuffer;
+    private StringEntryParser stringParser = new StringEntryParser();
 
     public EntryParser(LinkedList<String> inputBuffer) {
         this.inputBuffer = inputBuffer;
@@ -17,21 +18,31 @@ public class EntryParser {
 
         Map<String, String> tags = new HashMap<>();
 
-        Pattern typeAndIDPattern = Pattern.compile("\\s*@([^{(]+)[{(]\\s*(.+)\\s*,");
+        Pattern typePattern = Pattern.compile("\\s*@([^{(]+).*");
         /* Pattern explanation:
             \\s*@ - find @
-            ([^({])[{(] - match any character till you find braces
-            \\s*(.+)\\s*, - match any non-whitespace characters till you find comma
+            ([^({]+).* - match any character till you find braces
          */
 
         for(String line : inputBuffer) {
-            Matcher m = typeAndIDPattern.matcher(line);
+            Matcher m = typePattern.matcher(line);
             if(m.find()) {
                 String type = m.group(1).toLowerCase();
-                String ID = m.group(2);
-                tags.put("type", type);
-                tags.put("ID", ID);
-                break;
+                switch(type) {
+                    case "string":
+                        stringParser.add(line);
+                    case "preamble":
+                    case "comment":
+                        return new HashMap<>();
+                    default:
+                        Pattern typeAndIDPattern = Pattern.compile("\\s*@([^{(]+)[{(]\\s*(.*)\\s*,?");
+                        Matcher m2 = typeAndIDPattern.matcher(line);
+                        if(m2.find()) {
+                            String ID = m2.group(2);
+                            tags.put("type", type);
+                            tags.put("ID", ID);
+                        }
+                }
             }
         }
 
@@ -58,7 +69,7 @@ public class EntryParser {
                 } else if(m.group(4) != null) {
                     value = m.group(4);
                 } else {
-                    // TODO here we should parse the concatenation
+                    System.out.println("parsed: " + stringParser.parse(m.group(5)));
                     value = m.group(5);
                 }
                 tags.put(name, value);

@@ -26,4 +26,18 @@ public class Entry{
         }
         return result.toString();
     }
+
+    public String toTableString(char border, int width1, int width2) {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<String, String> e : tags.entrySet()) {
+            String firstCol = String.format("%-" + (width1 - 1) + "s", e.getKey());
+            String secondCol = String.format("%-" + (width2 - 2) + "s", e.getValue());
+            builder.append(border + " "
+                    + firstCol
+                    + " " + border + " "
+                    + secondCol
+                    + border + "\n");
+        }
+        return builder.toString();
+    }
 }

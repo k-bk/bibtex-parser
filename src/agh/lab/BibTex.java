@@ -14,6 +14,7 @@ public class BibTex {
         File file = new File(args[0]);
         List<Entry> entries = new ArrayList<>();
         FilterSystem filterSystem = new FilterSystem();
+        EntryListVisualizer visualizer = new EntryListVisualizer();
         try {
             Scanner input = new Scanner(file);
             ChunkParser chunkParser = new ChunkParser(input);
@@ -28,6 +29,8 @@ public class BibTex {
             System.out.println(ex);
         }
 
-        System.out.println(filterSystem.getEntriesWithTag("publisher"));
+        System.out.println(visualizer.dump(
+                filterSystem.getEntriesWithTag("month"),
+                '#', 15, 75));
     }
 }
