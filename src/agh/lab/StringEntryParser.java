@@ -10,6 +10,21 @@ public class StringEntryParser {
     private static Pattern noquote = Pattern.compile("\"(.*)\"");
     private Map<String, String> stringMap = new HashMap<>();
 
+    public StringEntryParser() {
+        stringMap.put("jan","January");
+        stringMap.put("feb","February");
+        stringMap.put("mar","March");
+        stringMap.put("apr","April");
+        stringMap.put("may","May");
+        stringMap.put("jun","June");
+        stringMap.put("jul","July");
+        stringMap.put("aug","August");
+        stringMap.put("sep","September");
+        stringMap.put("oct","October");
+        stringMap.put("nov","November");
+        stringMap.put("dec","December");
+    }
+
     public String parse(String line) {
         StringBuilder parsedLine = new StringBuilder();
         for(String part : line.split("\\s*#\\s*")) {

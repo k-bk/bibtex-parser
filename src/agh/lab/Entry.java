@@ -4,14 +4,16 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class Entry{
+public class Entry {
 
     private String type;
     private Map<String, String> tags = new HashMap<>();
+    private static EntryTypes entryTypes = new EntryTypes();
 
     public Entry(LinkedList<String> input, FilterSystem filterSystem) {
         EntryParser parser = new EntryParser(input);
         tags = parser.parse();
+        type = tags.get(type);
         filterSystem.update(this);
     }
 

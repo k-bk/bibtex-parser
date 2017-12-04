@@ -1,5 +1,6 @@
 package agh.lab;
 
+import javax.naming.directory.InvalidAttributesException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public class BibTex {
     public static void main(String[] args) {
 
         File file = new File(args[0]);
+        char border = args[1].toCharArray()[0];
         List<Entry> entries = new ArrayList<>();
         FilterSystem filterSystem = new FilterSystem();
         EntryListVisualizer visualizer = new EntryListVisualizer();
@@ -24,13 +26,12 @@ public class BibTex {
                 entries.add(entry);
             }
             input.close();
-
         } catch(FileNotFoundException ex) {
             System.out.println(ex);
         }
 
         System.out.println(visualizer.dump(
-                filterSystem.getEntriesWithTag("month"),
-                '#', 15, 75));
+                filterSystem.select("author", "knuth"),
+                border, 15, 75));
     }
 }

@@ -3,15 +3,11 @@ package agh.lab;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntryFilter{
+public class Filter {
     private List<Entry> entryList = new ArrayList<>();
 
-    public EntryFilter(Entry entry) {
+    public Filter(Entry entry) {
         entryList.add(entry);
-    }
-
-    public EntryFilter() {
-
     }
 
     public void update(Entry entry){
