@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class EntryParser {
     private LinkedList<String> inputBuffer;
-    private StringEntryParser stringParser = new StringEntryParser();
+    private static StringEntryParser stringParser = new StringEntryParser();
 
     public EntryParser(LinkedList<String> inputBuffer) {
         this.inputBuffer = inputBuffer;
@@ -35,7 +35,7 @@ public class EntryParser {
                     case "comment":
                         return new HashMap<>();
                     default:
-                        Pattern typeAndIDPattern = Pattern.compile("\\s*@([^{(]+)[{(]\\s*(.*)\\s*,?");
+                        Pattern typeAndIDPattern = Pattern.compile("\\s*@([^{(]+)[{(]\\s*(.*)\\s*,");
                         Matcher m2 = typeAndIDPattern.matcher(line);
                         if(m2.find()) {
                             String ID = m2.group(2);
@@ -69,8 +69,7 @@ public class EntryParser {
                 } else if(m.group(4) != null) {
                     value = m.group(4);
                 } else {
-                    System.out.println("parsed: " + stringParser.parse(m.group(5)));
-                    value = m.group(5);
+                    value = stringParser.parse(m.group(5));
                 }
                 tags.put(name, value);
             }
