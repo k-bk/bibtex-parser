@@ -38,8 +38,7 @@ public class Entry {
 
     public String toTableString(char border, int width1, int width2) {
         StringBuilder builder = new StringBuilder();
-        builder.append(borderedString("type", type, width1, width2, border));
-        builder.append(borderedString("ID", id, width1, width2, border));
+        builder.append(borderedString( type,"(" + id + ")", width1, width2, border));
         for (Map.Entry<String, String> e : tags.entrySet()) {
             if (e.getKey().equals("author")) {
                 String first = "author";

@@ -34,6 +34,14 @@ public class FilterSystem {
 
     public List<Entry> getEntriesWithTag(String tag) {
         tag = tag.toLowerCase();
+        if(tag.equals("type")) {
+            List<Entry> result = new LinkedList<>();
+            for(Map.Entry<String, Entry> e : entries.entrySet()) {
+                if(e.getValue().getType().equals(tag))
+                    result.add(e.getValue());
+            }
+            return result;
+        }
         if(filters.containsKey(tag)) {
             return filters.get(tag).toList();
         } else {

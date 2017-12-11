@@ -1,5 +1,7 @@
 package agh.lab;
 
+import gnu.getopt.Getopt;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.LinkedList;
@@ -7,15 +9,21 @@ import java.util.Scanner;
 
 public class BibTex {
 
+    private File file;
+    private char border = '#';
+    private String tag;
+    private String pattern = "";
+
     public static void main(String[] args) {
 
-        File file = new File(args[0]);
-        char border = args[1].toCharArray()[0];
+        BibTex bibTex = new BibTex();
+        bibTex.readArgs(args);
+
         FilterSystem filterSystem = new FilterSystem();
         TableVisualizer visualizer = new TableVisualizer();
         EntryTypes entryTypes = new EntryTypes();
         try {
-            Scanner input = new Scanner(file);
+            Scanner input = new Scanner(bibTex.file);
             ChunkParser chunkParser = new ChunkParser(input);
             EntryParser entryParser = new EntryParser(filterSystem);
             while (chunkParser.hasNext()) {
@@ -27,7 +35,7 @@ public class BibTex {
                 }
             }
             input.close();
-        } catch(FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             System.out.println(ex);
         }
 
@@ -37,9 +45,43 @@ public class BibTex {
             System.out.println(e);
         }
 
-        System.out.println(visualizer.dump(
-                filterSystem.select("author", ""),
-                border, 15, 75));
-        //System.out.println(visualizer.dump(filterSystem.select(), border, 15, 75));
+        if (bibTex.tag != null) {
+            System.out.println(visualizer.dump(filterSystem.select(bibTex.tag, bibTex.pattern), bibTex.border, 15, 75));
+        } else {
+            System.out.println(visualizer.dump(filterSystem.select(), bibTex.border, 15, 75));
+        }
+    }
+
+    public void readArgs(String[] args) {
+        int c;
+        Getopt g = new Getopt("bibtex-parser", args, "f:b:hs:p:");
+        while ((c = g.getopt()) != -1) {
+            switch(c) {
+                case 'f':
+                    file = new File(g.getOptarg());
+                    break;
+                case 's':
+                    tag = g.getOptarg();
+                    break;
+                case 'p':
+                    pattern = g.getOptarg();
+                    break;
+                case 'h':
+                    System.out.println("-f \t FileName");
+                    System.out.println("-s \t Select by tag eg. author, title");
+                    System.out.println("-p \t Pattern used for selection.");
+                    System.out.println("-b \t Frame character.");
+                    System.out.println("-h \t Display help message.");
+                    break;
+                case 'b':
+                    border = g.getOptarg().toCharArray()[0];
+                    break;
+                default:
+                    System.out.println("Option " + c + " not recognized. Type -h for help.");
+
+
+
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringParser {
-    private static Pattern stringPattern = Pattern.compile("\\s*.*[({]\\s*(\\S+)\\s*=\\s*\"([^\"]+).*");
+    private static Pattern stringPattern = Pattern.compile("\\s*.*[({]\\s*(\\S+)\\s*=\\s*(\"[^\"]+.).*");
     private static Pattern noquote = Pattern.compile("[\"|{](.*)[\"|}]");
     private static Pattern isDigit = Pattern.compile("(\\d+)");
     private Map<String, String> stringMap = new HashMap<>();
@@ -52,7 +52,8 @@ public class StringParser {
     public void add(String stringEntry) {
         Matcher m = stringPattern.matcher(stringEntry);
         if(m.find()) {
-            stringMap.put(m.group(1).toLowerCase(), m.group(2));
+            String value = parse(m.group(2));
+            stringMap.put(m.group(1).toLowerCase(), value);
         }
     }
 }
