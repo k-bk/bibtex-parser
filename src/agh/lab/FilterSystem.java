@@ -9,20 +9,33 @@ import java.util.regex.Pattern;
 
 public class FilterSystem {
     private Map<String, Filter> filters = new HashMap<>();
+    private Map<String, Entry> entries = new HashMap<>();
 
     public void update(Entry entry){
-        for(Map.Entry<String, String> e : entry.getTags().entrySet()) {
-            if(filters.containsKey(e.getKey())) {
-                filters.get(e.getKey()).update(entry);
-            } else {
-                filters.put(e.getKey(), new Filter(entry));
+        if (!entry.getTags().containsKey("ignored")) {
+            for (Map.Entry<String, String> e : entry.getTags().entrySet()) {
+                if (filters.containsKey(e.getKey().toLowerCase())) {
+                    filters.get(e.getKey().toLowerCase()).update(entry);
+                } else {
+                    filters.put(e.getKey().toLowerCase(), new Filter(entry));
+                }
             }
+            entries.put(entry.getId(), entry);
         }
     }
 
+    public Entry getEntry(String id) {
+        return entries.getOrDefault(id, null);
+    }
+
+    public Map<String, Entry> getEntries() {
+        return entries;
+    }
+
     public List<Entry> getEntriesWithTag(String tag) {
-        if(filters.containsKey(tag.toLowerCase())) {
-            return filters.get(tag.toLowerCase()).toList();
+        tag = tag.toLowerCase();
+        if(filters.containsKey(tag)) {
+            return filters.get(tag).toList();
         } else {
             return new LinkedList<>();
         }
@@ -38,6 +51,14 @@ public class FilterSystem {
             if(m.find()) {
                 resultList.add(e);
             }
+        }
+        return resultList;
+    }
+
+    public List<Entry> select() {
+        List<Entry> resultList = new LinkedList<>();
+        for (Entry e : entries.values()) {
+            resultList.add(e);
         }
         return resultList;
     }

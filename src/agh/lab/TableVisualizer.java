@@ -3,7 +3,7 @@ package agh.lab;
 import java.util.List;
 import java.util.Map;
 
-public class EntryListVisualizer {
+public class TableVisualizer {
 
     /**
      * Convert given list of Entries into a table. The borders of table

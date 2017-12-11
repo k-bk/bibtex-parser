@@ -1,16 +1,19 @@
 package agh.lab;
 
+import jdk.nashorn.internal.runtime.ParserException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringEntryParser {
+public class StringParser {
     private static Pattern stringPattern = Pattern.compile("\\s*.*[({]\\s*(\\S+)\\s*=\\s*\"([^\"]+).*");
-    private static Pattern noquote = Pattern.compile("\"(.*)\"");
+    private static Pattern noquote = Pattern.compile("[\"|{](.*)[\"|}]");
+    private static Pattern isDigit = Pattern.compile("(\\d+)");
     private Map<String, String> stringMap = new HashMap<>();
 
-    public StringEntryParser() {
+    public StringParser() {
         stringMap.put("jan","January");
         stringMap.put("feb","February");
         stringMap.put("mar","March");
@@ -25,7 +28,7 @@ public class StringEntryParser {
         stringMap.put("dec","December");
     }
 
-    public String parse(String line) {
+    public String parse(String line) throws ParserException {
         StringBuilder parsedLine = new StringBuilder();
         for(String part : line.split("\\s*#\\s*")) {
             if(stringMap.containsKey(part.toLowerCase())) {
@@ -35,7 +38,12 @@ public class StringEntryParser {
                 if(nq.find())
                     parsedLine.append(nq.group(1));
                 else
-                    parsedLine.append(part);
+                    if(isDigit.matcher(part).find()) {
+                        parsedLine.append(isDigit.matcher(part).group(1));
+                    } else {
+                        throw new ParserException("No string \"" + part + "\" was defined\n Line: " + line);
+                    }
+
             }
         }
         return parsedLine.toString();

@@ -6,6 +6,7 @@ import java.util.List;
 public class Filter {
     private List<Entry> entryList = new ArrayList<>();
 
+    public Filter() {}
     public Filter(Entry entry) {
         entryList.add(entry);
     }

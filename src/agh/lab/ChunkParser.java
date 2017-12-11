@@ -1,7 +1,6 @@
 package agh.lab;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,37 +13,41 @@ public class ChunkParser {
         this.inputFile = inputFile;
     }
 
-    public LinkedList<String> nextChunk() {
+    public String nextChunk() throws ParserException {
 
-        LinkedList<String> chunk = new LinkedList<>();
+        // Find next occurrence of the chunkBegin pattern
         String line = "";
-
-        while(inputFile.hasNextLine()) {
+        while (inputFile.hasNextLine()) {
             line = inputFile.nextLine();
             Matcher m = chunkBegin.matcher(line);
-            if(m.find()) {
+            if (m.find()) {
                 break;
             }
         }
 
+        // Load lines into a chunk till you find ending bracket
+        int brackets = countBrackets(line);
 
-        int braces = countBraces(line);
-        chunk.add(line);
+        StringBuilder chunkBuilder = new StringBuilder();
+        chunkBuilder.append(line + "\n");
 
-        while(braces != 0 && inputFile.hasNextLine()) {
+        while (brackets > 0 && inputFile.hasNextLine()) {
             line = inputFile.nextLine();
-            chunk.add(line);
-            braces += countBraces(line);
+            chunkBuilder.append(line + "\n");
+            brackets += countBrackets(line);
         }
 
-        return chunk;
+        if (brackets < 0 || (brackets > 0 && !inputFile.hasNextLine()))
+            throw new ParserException("Unmatched {} bracket at \"" + line + "\" line.");
+
+        return chunkBuilder.toString();
     }
 
     public boolean hasNext() {
         return inputFile.hasNextLine();
     }
 
-    private int countBraces(String line) {
+    private int countBrackets(String line) {
         int result = 0;
         for(char c : line.toCharArray()) {
             if(c == '{')
